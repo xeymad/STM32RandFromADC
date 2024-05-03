@@ -6,3 +6,6 @@ In 1 second there are 500 computations, which means that assested speed of the R
 > [!NOTE]
 > To assest a minimal quality of this RNG, a generated file from UART (data2.adc) is tested in the [NIST SP800-22rev1a test suite](https://csrc.nist.gov/projects/random-bit-generation/documentation-and-software).  
 The output is displayed in file ```console_output.txt```.
+
+
+For more informations, send a mail to giuseppe.gambardella.gng@gmail.com.
