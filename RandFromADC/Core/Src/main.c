@@ -37,7 +37,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define NUMBER_OF_RANDOM_BITS_TO_GENERATE 		512000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,7 +59,22 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int uint32_to_binary_string(char *binary_string, uint32_t len, uint32_t num) {
+    if (binary_string == NULL || len != 33)
+    {
+        // Memory allocation failed
+        return 1;
+    }
+    // Null-terminate the string
+    binary_string[32] = '\0';
+    // Convert each bit of the uint32_t to '0' or '1'
+    for (int i = 31; i >= 0; i--)
+    {
+        binary_string[i] = (num & 1) ? '1' : '0';
+        num >>= 1;
+    }
+    return 0;
+}
 
 /* USER CODE END 0 */
 
@@ -96,33 +111,37 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  printf("RANDOM NUMBERS GENERATOR WITH ADC\r\n");
+  //printf("RANDOM NUMBERS GENERATOR WITH ADC\r\n");
   int seed = rand();
   UNUSED(seed);
   uint32_t millis;
   UNUSED(millis);
   RandFromADC_init();
+  char binary_string[33];
+  uint32_t random;
+  uint32_t cnt = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	uint32_t start = HAL_GetTick();
-	uint32_t random;
-	if(RandFromADC_getRandom(&random) != 0)
+	while(cnt < 512000)
 	{
-		Error_Handler();
+		uint32_t start = HAL_GetTick();
+		if(RandFromADC_getRandom(&random) != 0)
+		{
+			Error_Handler();
+		}
+		millis = HAL_GetTick() - start;
+		uint32_to_binary_string(binary_string, sizeof(binary_string),random);
+		printf("%s\r\n", binary_string);
+		cnt += 32;
 	}
-	millis = HAL_GetTick() - start;
-	printf("Calculated Random %lu in %lu milliseconds\r\n", random, millis);
-	HAL_Delay(1000);
-	/*Start bit masking*/
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	HAL_Delay(5000);
   }
   /* USER CODE END 3 */
 }

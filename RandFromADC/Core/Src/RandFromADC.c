@@ -39,10 +39,12 @@ static void RandFromADC_fillRandomVar(uint16_t* array, uint32_t arraySize, uint3
 		return;
 	}
 	*out = 0;
+	uint32_t shift = 0;
 	for(int i = 0; i < RANDFROMADC_NUM_OF_MEASURES; i++)
 	{
 		array[i] &= RANDFROMADC_MASK_OF_RAND_BITS;
-		*out += (array[i] << (i+RANDFROMADC_NUM_OF_RAND_BITS));
+		*out += (array[i] << (shift));
+		shift += RANDFROMADC_NUM_OF_RAND_BITS;
 	}
 	return;
 }
